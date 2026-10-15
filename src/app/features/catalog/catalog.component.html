@@ -1,0 +1,105 @@
+<div class="catalog-page">
+  <div class="catalog-header">
+    <div>
+      <h1>Catálogo de unidades</h1>
+      <p class="subtitle">Elige una tarjeta para ver el detalle o seleccionarla.</p>
+    </div>
+    @if (isAdmin) {
+      <button type="button" class="btn-primary" (click)="newUnit()">+ Nueva unidad</button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="banner-error">{{ error() }}</div>
+  }
+
+  @if (isAdmin && showForm()) {
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2>{{ editingId() != null ? 'Editar unidad' : 'Nueva unidad' }}</h2>
+        <button type="button" class="icon-btn" (click)="cancelEdit()" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          Nombre
+          <input [value]="form().name" (input)="updateForm('name', $any($event.target).value)" />
+        </label>
+        <label>
+          Tipo
+          <select [value]="form().type" (change)="updateForm('type', $any($event.target).value)">
+            <option value="HABITACION">Habitación</option>
+            <option value="CABANA">Cabaña</option>
+            <option value="LODGE">Lodge</option>
+          </select>
+        </label>
+        <label>
+          Capacidad
+          <input type="number" min="1" [value]="form().capacity"
+                 (input)="updateForm('capacity', +$any($event.target).value)" />
+        </label>
+        <label>
+          Precio/noche
+          <input type="number" min="0" step="0.01" [value]="form().pricePerNight"
+                 (input)="updateForm('pricePerNight', +$any($event.target).value)" />
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" [checked]="form().available"
+                 (change)="updateForm('available', $any($event.target).checked)" />
+          Disponible
+        </label>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="save()">
+          {{ editingId() != null ? 'Guardar cambios' : 'Crear' }}
+        </button>
+        <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Cargando…</p>
+  } @else if (units().length === 0) {
+    <p class="empty">Todavía no hay unidades cargadas en el catálogo.</p>
+  } @else {
+    <div class="card-grid">
+      @for (unit of units(); track unit.id) {
+        <div
+          class="unit-card"
+          [class.selected]="selectedId() === unit.id"
+          [class.unavailable]="!unit.available"
+          (click)="toggleSelect(unit)"
+        >
+          <div class="unit-card-top">
+            <span class="badge" [attr.data-type]="unit.type">{{ typeLabel(unit.type) }}</span>
+            <span class="badge" [class.badge-available]="unit.available" [class.badge-unavailable]="!unit.available">
+              {{ unit.available ? 'Disponible' : 'No disponible' }}
+            </span>
+          </div>
+
+          <h3>{{ unit.name }}</h3>
+
+          <div class="unit-meta">
+            <span>👤 {{ unit.capacity }} {{ unit.capacity === 1 ? 'persona' : 'personas' }}</span>
+          </div>
+
+          <div class="unit-price">
+            <strong>{{ unit.pricePerNight | number: '1.0-0' }}</strong>
+            <span> / noche</span>
+          </div>
+
+          @if (selectedId() === unit.id) {
+            <div class="selected-tag">✓ Seleccionada</div>
+          }
+
+          @if (isAdmin) {
+            <div class="row-actions" (click)="$event.stopPropagation()">
+              <button type="button" class="btn-secondary" (click)="startEdit(unit)">Editar</button>
+              <button type="button" class="btn-danger" (click)="remove(unit)">Eliminar</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

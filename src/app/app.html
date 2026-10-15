@@ -1,0 +1,27 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a routerLink="/catalog" class="topbar-brand">
+      <span class="brand-mark">AS</span>
+      <span>AndesStay</span>
+    </a>
+
+    @if (auth.isAuthenticated()) {
+      <nav class="topbar-nav">
+        <a routerLink="/catalog" routerLinkActive="active">Catálogo</a>
+        @if (auth.hasRole('ADMIN')) {
+          <a routerLink="/audit" routerLinkActive="active">Auditoría</a>
+        }
+      </nav>
+      <div class="topbar-user">
+        @if (auth.username()) {
+          <span class="user-email">{{ auth.username() }}</span>
+        }
+        <button type="button" class="btn-logout" (click)="logout()">Salir</button>
+      </div>
+    }
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+</div>

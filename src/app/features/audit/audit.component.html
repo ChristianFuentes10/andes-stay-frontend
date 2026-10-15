@@ -1,0 +1,53 @@
+<div class="audit-page">
+  <div class="audit-header">
+    <h1>Auditoría</h1>
+    <p class="subtitle">Eventos registrados en la plataforma.</p>
+  </div>
+
+  <div class="filters-card">
+    <label>
+      Usuario
+      <input [(ngModel)]="usuario" placeholder="ej. jperez" />
+    </label>
+    <label>
+      Tipo de evento
+      <input [(ngModel)]="tipoEvento" placeholder="ej. UNIT_CREATED" />
+    </label>
+    <button type="button" class="btn-primary" (click)="search()">Buscar</button>
+  </div>
+
+  @if (error()) {
+    <div class="banner-error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Cargando…</p>
+  } @else if (events().length === 0) {
+    <p class="empty">No se encontraron eventos con esos filtros.</p>
+  } @else {
+    <div class="event-list">
+      @for (event of events(); track event.id) {
+        <div class="event-card">
+          <div class="event-top">
+            <span class="badge">{{ event.eventType }}</span>
+            <span class="event-date">{{ event.occurredAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="event-body">
+            <div><strong>Actor:</strong> {{ event.actor }}</div>
+            <div><strong>Agregado:</strong> {{ event.aggregateId }}</div>
+          </div>
+          <div class="event-ids">
+            <span>trace: {{ event.traceId }}</span>
+            <span>correlation: {{ event.correlationId }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="pagination">
+      <button type="button" class="btn-secondary" [disabled]="page() === 0" (click)="prev()">← Anterior</button>
+      <span>Página {{ page() + 1 }} de {{ totalPages() || 1 }}</span>
+      <button type="button" class="btn-secondary" [disabled]="page() + 1 >= totalPages()" (click)="next()">Siguiente →</button>
+    </div>
+  }
+</div>

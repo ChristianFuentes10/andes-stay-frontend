@@ -1,0 +1,14 @@
+<div class="auth-screen">
+  <div class="status-card">
+    @if (error()) {
+      <div class="icon icon-error">!</div>
+      <h1>No se pudo iniciar sesión</h1>
+      <p class="subtitle">{{ error() }}</p>
+      <a routerLink="/login" class="btn-primary">Volver a intentar</a>
+    } @else {
+      <div class="spinner"></div>
+      <h1>Iniciando sesión…</h1>
+      <p class="subtitle">Estamos validando tus credenciales, esto solo toma un segundo.</p>
+    }
+  </div>
+</div>
